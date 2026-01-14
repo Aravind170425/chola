@@ -11,7 +11,17 @@ function App() {
       {/* NAVBAR */}
       <header className="navbar">
         <div className="navbar-container">
-          <div className="logo">CholaBiz</div>
+          <div className="logo">
+            <img
+              src="/cholabiz_logo.jpeg"
+              alt="Chola Biz Logo"
+              style={{
+                width: "120px",
+                height: "auto",
+                objectFit: "contain",
+              }}
+            />
+          </div>
 
           <nav className="nav-links">
             <NavLink to="/" end className="nav-link">
@@ -23,10 +33,9 @@ function App() {
             <NavLink to="/privacy-policy" className="nav-link">
               Privacy Policy
             </NavLink>
-                  <NavLink to="/terms-and-services" className="nav-link">
-             Terms And Services 
+            <NavLink to="/terms-and-services" className="nav-link">
+              Terms And Services
             </NavLink>
-            
           </nav>
         </div>
       </header>
@@ -37,7 +46,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                    <Route path="/terms-and-services" element={<TermsandServices />} />
+          <Route path="/terms-and-services" element={<TermsandServices />} />
         </Routes>
       </main>
 
@@ -45,9 +54,20 @@ function App() {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-left">
-            <h3 className="footer-logo">CholaBiz</h3>
+            <div className="logo">
+              <img
+                src="/cholabiz_logo.jpeg"
+                alt="Chola Biz Logo"
+                style={{
+                  width: "120px",
+                  height: "auto",
+                  objectFit: "contain",
+                }}
+              />
+            </div>
             <p className="footer-text">
-              Business automation platform for WhatsApp communication and customer engagement.
+              Business automation platform for WhatsApp communication and
+              customer engagement.
             </p>
           </div>
 
@@ -62,7 +82,8 @@ function App() {
         </div>
 
         <div className="footer-bottom">
-          © {new Date().getFullYear()} Chola Business Automation Pvt. Ltd. All rights reserved.
+          © {new Date().getFullYear()} Chola Business Automation Pvt. Ltd. All
+          rights reserved.
         </div>
       </footer>
     </div>

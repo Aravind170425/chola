@@ -1,0 +1,71 @@
+.about {
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+/* Hero */
+.about-hero {
+  background: linear-gradient(135deg, #128c7e, #075e54);
+  color: white;
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.about-hero h1 {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.about-hero p {
+  font-size: 18px;
+  max-width: 700px;
+  margin: auto;
+}
+
+/* Content */
+.about-content {
+  padding: 60px 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.content-box {
+  margin-bottom: 40px;
+}
+
+.content-box h2 {
+  color: #128c7e;
+  margin-bottom: 10px;
+}
+
+.content-box p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Why Us */
+.why-us {
+  background: #f1fdf8;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.why-us h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.why-us ul {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: auto;
+}
+
+.why-us li {
+  background: white;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
