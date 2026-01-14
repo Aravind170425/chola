@@ -118,7 +118,7 @@ const TermsandServices = () => {
         contact:
       </p>
       <p className="tos-email">
-        📧 <a href="mailto:support@cholabiz.com">support@cholabiz.co</a>
+        📧 <a href="mailto:support@cholabiz.com">support@cholabiz.com</a>
       </p>
     </div>
   );
