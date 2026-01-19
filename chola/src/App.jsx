@@ -4,6 +4,7 @@ import About from "./AboutPage";
 import PrivacyPolicy from "./PrivacyPolicy";
 import TermsandServices from "./TermsandServices";
 import "./App.css";
+import WhatsappBulkSender from "./WhatsappBulkSender";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-and-services" element={<TermsandServices />} />
+          <Route path="/dashboard/whatsapp"element={<WhatsappBulkSender/>} />
         </Routes>
       </main>
 
