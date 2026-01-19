@@ -1,7 +1,10 @@
+// Navbar.jsx
 import { AppBar, Toolbar, Box, Button } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export function Navbar() {
+  const navigate = useNavigate();
+
   const linkStyle = ({ isActive }) => ({
     textDecoration: "none",
     color: isActive ? "#ff7a45" : "#333",
@@ -23,8 +26,10 @@ export function Navbar() {
           width: "100%",
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
+        {/* Logo */}
         <Box>
           <img
             src="/cholabiz_logo.jpeg"
@@ -33,7 +38,8 @@ export function Navbar() {
           />
         </Box>
 
-        <Box sx={{ display: "flex", gap: 3 }}>
+        {/* Links + Auth Buttons */}
+        <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
           <NavLink to="/" end style={linkStyle}>
             Home
           </NavLink>
@@ -46,6 +52,38 @@ export function Navbar() {
           <NavLink to="/terms-and-services" style={linkStyle}>
             Terms And Services
           </NavLink>
+
+          {/* Auth Buttons */}
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{
+              ml: 2,
+              borderColor: "#ff7a45",
+              color: "#ff7a45",
+              textTransform: "none",
+              "&:hover": {
+                borderColor: "#ff7a45",
+                background: "rgba(255,122,69,0.08)",
+              },
+            }}
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </Button>
+
+          <Button
+            variant="contained"
+            size="small"
+            sx={{
+              background: "#ff7a45",
+              textTransform: "none",
+              "&:hover": { background: "#e96a3c" },
+            }}
+            onClick={() => navigate("/signup")}
+          >
+            Sign Up
+          </Button>
         </Box>
       </Toolbar>
     </AppBar>

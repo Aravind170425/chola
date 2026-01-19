@@ -6,6 +6,8 @@ import PrivacyPolicy from "./PrivacyPolicy";
 import TermsandServices from "./TermsandServices";
 import { Navbar } from "./pages/Navbar.jsx";
 import { Footer } from "./pages/Footer.jsx";
+import { Login } from "./pages/Login.jsx";
+import { Signup } from "./pages/Signup.jsx";
 import { Box } from "@mui/material";
 
 
@@ -21,6 +23,8 @@ return (
 <Route path="/about" element={<About />} />
 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 <Route path="/terms-and-services" element={<TermsandServices />} />
+<Route path="/login" element={<Login />} />
+<Route path="/signup" element={<Signup />} />
 </Routes>
 </Box>
 
