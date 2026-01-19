@@ -1,4 +1,3 @@
-// pages/DashboardHome.jsx
 import { Box, Typography, Paper } from "@mui/material";
 
 export function DashboardHome() {
@@ -8,7 +7,8 @@ export function DashboardHome() {
         Dashboard
       </Typography>
 
-      <Paper sx={{ p: 3, borderRadius: 2 }}>
+      {/* Make Paper fully white and remove shadow */}
+      <Paper sx={{ p: 3, borderRadius: 2, background: "#fff" }} elevation={0}>
         <Typography sx={{ fontSize: 16, mb: 1 }}>
           Welcome to Chola Biz Dashboard 👋
         </Typography>
