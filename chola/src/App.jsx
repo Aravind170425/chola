@@ -26,7 +26,7 @@ return (
 <Route path="/terms-and-services" element={<TermsandServices />} />
 <Route path="/login" element={<Login />} />
 <Route path="/signup" element={<Signup />} />
-<Route path="/dashboard/whatsapp" element={<WhatsappBulkSender/>}/>
+
 </Routes>
 </Box>
 
