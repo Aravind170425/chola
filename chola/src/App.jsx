@@ -12,12 +12,14 @@ import { Box } from "@mui/material";
 import WhatsappBulkSender from "./WhatsappBulkSender.jsx";
 import { DashboardLayout } from "./pages/DashboardLayout.jsx";
 import { DashboardHome } from "./componet/Dashboard/DashboardHome.jsx";
+import { ProtectedRoute } from "./pages/ProtectedRoute.jsx";
 
 function App() {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith("/dashboard");
 
   return (
+    <>
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {!isDashboard && <Navbar />}
 
@@ -30,20 +32,25 @@ function App() {
           <Route path="/terms-and-services" element={<TermsandServices />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+<Route
+  path="/dashboard"
+  element={
+    <ProtectedRoute>
+      <DashboardLayout />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<DashboardHome />} />
+  <Route path="whatsapp" element={<WhatsappBulkSender />} />
+</Route>
 
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<DashboardHome />} />
-            <Route
-              path="whatsapp"
-              element={<WhatsappBulkSender />}
-            />
-          </Route>
+        
         </Routes>
       </Box>
 
       {!isDashboard && <Footer />}
     </Box>
+    </>
   );
 }
 
