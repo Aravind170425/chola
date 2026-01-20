@@ -1,75 +1,33 @@
-// pages/DashboardHome.jsx
-import { Box, Typography, Paper, Button, Snackbar, Alert } from "@mui/material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Button, Box } from "@mui/material";
 
-export function DashboardHome() {
-  const [isConnected, setIsConnected] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const navigate = useNavigate();
+const APP_ID = "874320005464617";
+const CONFIG_ID = "1178308291053223";
+const REDIRECT_URI = "https://yourdomain.com/whatsapp/callback";
+// localhost example:
+// http://localhost:5000/whatsapp/callback
 
-  const handleConnectWhatsapp = () => {
-    // simulate successful connection
-    setIsConnected(true);
-    setShowSnackbar(true);
-
-    // navigate after 1.5 seconds
-    setTimeout(() => {
-      navigate("/dashboard/whatsapp");
-    }, 1500);
-  };
-
-  const handleCloseSnackbar = () => {
-    setShowSnackbar(false);
+export const DashboardHome = () => {
+  const handleConnect = () => {
+    const url =
+      `https://www.facebook.com/v24.0/dialog/oauth` +
+      `?client_id=${APP_ID}` +
+      `&config_id=${CONFIG_ID}` +
+      `&response_type=code` +
+      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+    window.location.href = url;
   };
 
   return (
-    <Box>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
-        Dashboard
-      </Typography>
-
-      <Paper sx={{ p: 3, borderRadius: 2 }}>
-        <Typography sx={{ fontSize: 16, mb: 1 }}>
-          Welcome to Chola Biz Dashboard 👋
-        </Typography>
-
-        <Typography sx={{ fontSize: 14, color: "#555", mb: 3 }}>
-          From here you can manage WhatsApp campaigns, view reports,
-          and configure your business automation settings.
-        </Typography>
-
-        {/* Connect WhatsApp Button */}
-        {!isConnected && (
-          <Button
-            variant="contained"
-            sx={{
-              background: "#ff7a45",
-              textTransform: "none",
-              "&:hover": { background: "#e96a3c" },
-            }}
-            onClick={handleConnectWhatsapp}
-          >
-            Connect WhatsApp
-          </Button>
-        )}
-      </Paper>
-
-      {/* Snackbar Success Message */}
-      <Snackbar
-        open={showSnackbar}
-        autoHideDuration={2000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+    <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+      <Button
+        variant="contained"
+        color="success"
+        size="large"
+        onClick={handleConnect}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="success"
-          sx={{ borderRadius: 2 }}
-        >
-          WhatsApp connected successfully ✅
-        </Alert>
-      </Snackbar>
+        Connect WhatsApp
+      </Button>
     </Box>
   );
-}
+};
