@@ -2,7 +2,7 @@
 import { AppBar, Toolbar, Box, Button } from "@mui/material";
 import { NavLink, useNavigate } from "react-router-dom";
 
-export default function DummyNav() {
+export function DummyNav() {
   const navigate = useNavigate();
 
   const linkStyle = ({ isActive }) => ({
@@ -54,7 +54,7 @@ export default function DummyNav() {
           </NavLink>
 
           {/* Auth Buttons */}
-          <Button
+          {/* <Button
             variant="outlined"
             size="small"
             sx={{
@@ -70,9 +70,9 @@ export default function DummyNav() {
             onClick={() => navigate("/login")}
           >
             Login
-          </Button>
+          </Button> */}
 
-          <Button
+          {/* <Button
             variant="contained"
             size="small"
             sx={{
@@ -83,7 +83,7 @@ export default function DummyNav() {
             onClick={() => navigate("/signup")}
           >
             Sign Up
-          </Button>
+          </Button> */}
         </Box>
       </Toolbar>
     </AppBar>

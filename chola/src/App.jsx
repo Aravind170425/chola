@@ -16,6 +16,7 @@ import { DashboardD } from "./componet/Dashboard/DashboardD.jsx";
 import { ProtectedRoute } from "./pages/ProtectedRoute.jsx";
 import WhatsappSuccess from "./pages/WhatsappSucess.jsx";
 import Chat from "./pages/chat.jsx";
+import { DummyNav } from "./pages/DummyNav.jsx";
 
 function App() {
   const location = useLocation();
@@ -24,7 +25,8 @@ function App() {
   return (
     <>
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {!isDashboard && <Navbar />}
+      {!isDashboard ? <Navbar /> : <DummyNav />}
+      {/* {isDashboard && <DummyNav/>} */}
 
       <Box component="main" sx={{ flex: 1 }}>
         <Routes>
