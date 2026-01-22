@@ -1,47 +1,95 @@
 import { useState, useEffect } from "react";
+import {
+  Box,
+  TextField,
+  IconButton,
+  Button,
+  Typography,
+  Avatar,
+  Badge,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListItemSecondaryAction,
+  Paper,
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextareaAutosize,
+  Grid,
+  Chip,
+  Card,
+  CardContent,
+  useTheme,
+  useMediaQuery,
+  Drawer,
+} from "@mui/material";
+import {
+  Search as SearchIcon,
+  Clear as ClearIcon,
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  ArrowBack as ArrowBackIcon,
+  EmojiEmotions as EmojiIcon,
+  Send as SendIcon,
+  Phone as PhoneIcon,
+  Videocam as VideoIcon,
+  Email as EmailIcon,
+  Person as PersonIcon,
+  AccessTime as TimeIcon,
+  CalendarToday as CalendarIcon,
+  Close as CloseIcon,
+} from "@mui/icons-material";
+import { DashboardSidebar } from "../componet/Dashboard/DashboardSidebar";
 
 export default function Inbox() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
   const [contacts, setContacts] = useState([
-    { 
-      id: 1, 
-      number: "+91 9876543210", 
+    {
+      id: 1,
+      number: "+91 9876543210",
       name: "John Doe",
       status: "Online",
       lastSeen: "Just now",
-      avatarColor: "#FF6B6B"
+      avatarColor: "#FF6B6B",
     },
-    { 
-      id: 2, 
-      number: "+91 9123456789", 
+    {
+      id: 2,
+      number: "+91 9123456789",
       name: "Jane Smith",
       status: "Away",
       lastSeen: "5 min ago",
-      avatarColor: "#4ECDC4"
+      avatarColor: "#4ECDC4",
     },
-    { 
-      id: 3, 
-      number: "+1 5551234561", 
+    {
+      id: 3,
+      number: "+1 5551234561",
       name: "Robert Johnson",
       status: "Offline",
       lastSeen: "2 hours ago",
-      avatarColor: "#45B7D1"
+      avatarColor: "#45B7D1",
     },
-    { 
-      id: 4, 
-      number: "+44 7712345678", 
+    {
+      id: 4,
+      number: "+44 7712345678",
       name: "Emma Wilson",
       status: "Online",
       lastSeen: "Just now",
-      avatarColor: "#96CEB4"
+      avatarColor: "#96CEB4",
     },
-    { 
-      id: 5, 
-      number: "+91 9988776655", 
+    {
+      id: 5,
+      number: "+91 9988776655",
       name: "Alex Turner",
       status: "Busy",
       lastSeen: "30 min ago",
-      avatarColor: "#FFEAA7"
-    }
+      avatarColor: "#FFEAA7",
+    },
   ]);
 
   const [selectedId, setSelectedId] = useState(1);
@@ -49,25 +97,26 @@ export default function Inbox() {
     1: [
       { from: "agent", text: "Hello! How can I help you today?", time: "10:00 AM" },
       { from: "contact", text: "I need help with my order", time: "10:02 AM" },
-      { from: "agent", text: "Sure, can you provide your order ID?", time: "10:03 AM" }
+      { from: "agent", text: "Sure, can you provide your order ID?", time: "10:03 AM" },
     ],
-    2: [
-      { from: "contact", text: "Hi there!", time: "Yesterday" }
-    ]
+    2: [{ from: "contact", text: "Hi there!", time: "Yesterday" }],
   });
   const [input, setInput] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [newContact, setNewContact] = useState({ name: "", number: "" });
+  const [showContactsOnMobile, setShowContactsOnMobile] = useState(true);
 
-  const selectedContact = contacts.find(c => c.id === selectedId);
+  const selectedContact = contacts.find((c) => c.id === selectedId);
 
   // Initialize messages for new contacts
   useEffect(() => {
-    contacts.forEach(contact => {
+    contacts.forEach((contact) => {
       if (!messages[contact.id]) {
-        setMessages(prev => ({
+        setMessages((prev) => ({
           ...prev,
-          [contact.id]: []
+          [contact.id]: [],
         }));
       }
     });
@@ -77,963 +126,698 @@ export default function Inbox() {
     if (!input.trim()) return;
 
     const now = new Date();
-    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-    setMessages(prev => ({
+    setMessages((prev) => ({
       ...prev,
-      [selectedId]: [
-        ...(prev[selectedId] || []),
-        { from: "agent", text: input, time }
-      ]
+      [selectedId]: [...(prev[selectedId] || []), { from: "agent", text: input, time }],
     }));
 
     setInput("");
   };
 
-  const addContact = () => {
-    const number = prompt("Enter phone number");
-    if (!number) return;
+  const handleAddContact = () => {
+    if (!newContact.name || !newContact.number) return;
 
-    const name = prompt("Enter contact name") || "New Contact";
     const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8"];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-    setContacts(prev => [
+    setContacts((prev) => [
       ...prev,
-      { 
-        id: Date.now(), 
-        number,
-        name,
+      {
+        id: Date.now(),
+        number: newContact.number,
+        name: newContact.name,
         status: "Offline",
         lastSeen: "Never",
-        avatarColor: randomColor
-      }
+        avatarColor: randomColor,
+      },
     ]);
+
+    setNewContact({ name: "", number: "" });
+    setOpenAddDialog(false);
   };
 
-  const deleteContact = (id, e) => {
-    e.stopPropagation();
+  const deleteContact = (id) => {
     if (window.confirm("Are you sure you want to delete this contact?")) {
-      setContacts(prev => prev.filter(c => c.id !== id));
+      setContacts((prev) => prev.filter((c) => c.id !== id));
       if (selectedId === id) {
-        setSelectedId(contacts.filter(c => c.id !== id)[0]?.id || null);
+        const remainingContacts = contacts.filter((c) => c.id !== id);
+        setSelectedId(remainingContacts[0]?.id || null);
       }
     }
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contact.number.includes(searchQuery)
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contact.number.includes(searchQuery)
   );
 
-  const getInitials = (name) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Online":
+        return "#10B981";
+      case "Away":
+        return "#F59E0B";
+      case "Busy":
+        return "#EF4444";
+      default:
+        return "#9CA3AF";
+    }
   };
 
-  return (
-    <div style={styles.page}>
-      {/* LEFT CONTACT SECTION */}
-      <div style={styles.left}>
-        <div style={styles.leftHeader}>
-          <div style={styles.searchContainer}>
-            <div style={styles.searchIcon}>🔍</div>
-            <input
-              type="text"
-              placeholder="Search contacts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={styles.searchInput}
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery("")}
-                style={styles.clearSearch}
-              >
-                ×
-              </button>
-            )}
-          </div>
-          <button onClick={addContact} style={styles.addBtn} title="Add Contact">
-            <span style={styles.addIcon}>＋</span>
-          </button>
-        </div>
+  const getInitials = (name) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
-        <div style={styles.contactList}>
-          {filteredContacts.map(c => (
-            <div
-              key={c.id}
-              onClick={() => {
-                setSelectedId(c.id);
-                setShowProfile(false);
-              }}
-              style={{
-                ...styles.contact,
-                background: selectedId === c.id ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" : "transparent",
-                color: selectedId === c.id ? "white" : "#374151"
-              }}
-            >
-              <div 
-                style={{
-                  ...styles.avatar,
-                  background: selectedId === c.id ? "rgba(255,255,255,0.2)" : c.avatarColor,
-                  color: selectedId === c.id ? "white" : "white"
+  const handleContactSelect = (id) => {
+    setSelectedId(id);
+    setShowProfile(false);
+    if (isMobile) {
+      setShowContactsOnMobile(false);
+    }
+  };
+
+  const handleBackToContacts = () => {
+    setShowContactsOnMobile(true);
+  };
+
+  const renderMessageBubble = (message, index) => (
+    <Box
+      key={index}
+      sx={{
+        display: "flex",
+        justifyContent: message.from === "agent" ? "flex-end" : "flex-start",
+        mb: 2,
+        alignItems: "flex-end",
+      }}
+    >
+      {message.from === "contact" && (
+        <Avatar
+          sx={{
+            bgcolor: selectedContact?.avatarColor,
+            width: 32,
+            height: 32,
+            fontSize: 12,
+            mr: 1,
+          }}
+        >
+          {getInitials(selectedContact?.name || "")}
+        </Avatar>
+      )}
+      <Box>
+        <Paper
+          elevation={1}
+          sx={{
+            p: 1.5,
+            bgcolor: message.from === "agent" ? "primary.main" : "grey.100",
+            color: message.from === "agent" ? "white" : "text.primary",
+            borderRadius: message.from === "agent" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+            maxWidth: { xs: "85%", sm: "70%" },
+          }}
+        >
+          <Typography variant="body2">{message.text}</Typography>
+        </Paper>
+        <Typography
+          variant="caption"
+          sx={{
+            display: "block",
+            textAlign: message.from === "agent" ? "right" : "left",
+            ml: message.from === "contact" ? "44px" : 0,
+            mt: 0.5,
+            color: "text.secondary",
+          }}
+        >
+          {message.time}
+        </Typography>
+      </Box>
+    </Box>
+  );
+
+  const shouldShowContacts = !isMobile || (isMobile && showContactsOnMobile);
+  const shouldShowChat = !isMobile || (isMobile && !showContactsOnMobile);
+
+  return (
+    <>
+    <DashboardSidebar />
+    <Box sx={{ display: "flex", height: "89vh", bgcolor: "grey.50", overflow: "hidden" }}>
+      {/* Left Sidebar - Contacts */}
+      {shouldShowContacts && (
+        <Paper
+          elevation={0}
+          sx={{
+            width: { xs: "100%", md: 320 },
+            borderRight: "1px solid",
+            borderColor: "divider",
+            display: "flex",
+            flexDirection: "column",
+            bgcolor: "background.paper",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <Box sx={{ p: 2, borderBottom: "1px solid", borderColor: "divider" }}>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              <TextField
+                fullWidth
+                placeholder="Search contacts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                size="small"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchQuery && (
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={() => setSearchQuery("")}>
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 20,
+                    bgcolor: "grey.50",
+                  },
+                }}
+              />
+              <IconButton
+                onClick={() => setOpenAddDialog(true)}
+                sx={{
+                  bgcolor: "primary.main",
+                  color: "white",
+                  "&:hover": { bgcolor: "primary.dark" },
                 }}
               >
-                {getInitials(c.name)}
-              </div>
-              <div style={styles.contactInfo}>
-                <strong style={styles.contactName}>{c.name}</strong>
-                <span style={styles.contactNumber}>{c.number}</span>
-                <div style={styles.statusContainer}>
-                  <div 
-                    style={{
-                      ...styles.statusDot,
-                      background: c.status === "Online" ? "#10B981" : 
-                                 c.status === "Away" ? "#F59E0B" : 
-                                 c.status === "Busy" ? "#EF4444" : "#9CA3AF"
-                    }}
-                  />
-                  <span style={styles.statusText}>{c.status}</span>
-                </div>
-              </div>
-              <button 
-                onClick={(e) => deleteContact(c.id, e)}
-                style={styles.deleteBtn}
-                title="Delete Contact"
+                <AddIcon />
+              </IconButton>
+            </Box>
+          </Box>
+
+          <List sx={{ flex: 1, overflow: "auto", p: 1 }}>
+            {filteredContacts.map((contact) => (
+              <ListItem
+                key={contact.id}
+                button
+                selected={selectedId === contact.id}
+                onClick={() => handleContactSelect(contact.id)}
+                sx={{
+                  borderRadius: 2,
+                  mb: 0.5,
+                  "&.Mui-selected": {
+                    bgcolor: "primary.main",
+                    color: "white",
+                    "&:hover": { bgcolor: "primary.dark" },
+                  },
+                }}
               >
-                🗑️
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* CENTER CHAT SECTION */}
-      <div style={styles.center}>
-        {/* CHAT NAVBAR */}
-        <div style={styles.chatHeader}>
-          <div style={styles.chatHeaderLeft}>
-            <div 
-              style={{
-                ...styles.avatarBig,
-                background: selectedContact?.avatarColor
-              }}
-            >
-              {selectedContact && getInitials(selectedContact.name)}
-            </div>
-            <div style={styles.contactDetails}>
-              <strong style={styles.contactNameBig}>{selectedContact?.name}</strong>
-              <span style={styles.contactStatus}>{selectedContact?.status} • {selectedContact?.lastSeen}</span>
-            </div>
-          </div>
-          <button 
-            onClick={() => setShowProfile(!showProfile)}
-            style={styles.profileBtn}
-            title={showProfile ? "Close Profile" : "Open Profile"}
-          >
-            {showProfile ? "← Hide Profile" : "👤 Show Profile"}
-          </button>
-        </div>
-
-        {/* CHAT BODY */}
-        <div style={styles.chatBody}>
-          <div style={styles.welcomeMessage}>
-            <div style={styles.welcomeAvatar}>
-              {selectedContact && getInitials(selectedContact.name)}
-            </div>
-            <div style={styles.welcomeText}>
-              <strong>{selectedContact?.name}</strong>
-              <p>This is the beginning of your conversation with {selectedContact?.name}</p>
-            </div>
-          </div>
-
-          {(messages[selectedId] || []).map((m, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                justifyContent: m.from === "agent" ? "flex-end" : "flex-start",
-                marginBottom: 16,
-                alignItems: "flex-end"
-              }}
-            >
-              {m.from === "contact" && (
-                <div 
-                  style={{
-                    ...styles.avatarSmall,
-                    background: selectedContact?.avatarColor,
-                    marginRight: 8
+                <ListItemAvatar>
+                  <Badge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        backgroundColor: getStatusColor(contact.status),
+                        border: "2px solid white",
+                      },
+                    }}
+                  >
+                    <Avatar sx={{ bgcolor: contact.avatarColor }}>
+                      {getInitials(contact.name)}
+                    </Avatar>
+                  </Badge>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="subtitle2" noWrap>
+                      {contact.name}
+                    </Typography>
+                  }
+                  secondary={
+                    <>
+                      <Typography variant="caption" display="block" noWrap>
+                        {contact.number}
+                      </Typography>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
+                        <Box
+                          sx={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: "50%",
+                            bgcolor: getStatusColor(contact.status),
+                          }}
+                        />
+                        <Typography variant="caption">
+                          {contact.status} • {contact.lastSeen}
+                        </Typography>
+                      </Box>
+                    </>
+                  }
+                  sx={{
+                    "& .MuiListItemText-secondary": {
+                      color: selectedId === contact.id ? "rgba(51, 47, 47, 0.7)" : "text.secondary",
+                    },
                   }}
-                >
-                  {selectedContact && getInitials(selectedContact.name)}
-                </div>
-              )}
-              <div>
-                <div
-                  style={{
-                    ...styles.bubble,
-                    background: m.from === "agent" ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" : "#F3F4F6",
-                    color: m.from === "agent" ? "white" : "#374151",
-                    borderRadius: m.from === "agent" ? "18px 18px 4px 18px" : "18px 18px 18px 4px"
-                  }}
-                >
-                  {m.text}
-                </div>
-                <div 
-                  style={{
-                    ...styles.messageTime,
-                    textAlign: m.from === "agent" ? "right" : "left",
-                    marginLeft: m.from === "contact" ? "44px" : "0"
-                  }}
-                >
-                  {m.time}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                />
+                <ListItemSecondaryAction>
+                  <IconButton
+                    edge="end"
+                    size="small"
+                    onClick={() => deleteContact(contact.id)}
+                    sx={{
+                      color: selectedId === contact.id ? "white" : "error.main",
+                      opacity: 0.7,
+                      "&:hover": { opacity: 1 },
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      )}
 
-        {/* INPUT BAR */}
-        <div style={styles.inputBar}>
-          <button style={styles.emojiBtn}>😊</button>
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder={`Message ${selectedContact?.name}...`}
-            style={styles.input}
-            onKeyDown={e => e.key === "Enter" && sendMessage()}
-          />
-          <button 
-            onClick={sendMessage} 
-            style={{
-              ...styles.sendBtn,
-              opacity: input.trim() ? 1 : 0.5
+      {/* Main Chat Area */}
+      {shouldShowChat && selectedContact && (
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            // minWidth: 0,
+            width: "1000%",
+            transition: "all 0.3s ease",
+            transform: "translateX(0)",
+            position: "relative",
+            mr: showProfile ? { md: 45, lg: 48 } : 0,
+          }}
+        >
+          {/* Chat Header */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2,
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              bgcolor: "background.paper",
             }}
-            disabled={!input.trim()}
           >
-            <span style={styles.sendIcon}>➤</span>
-          </button>
-        </div>
-      </div>
-
-      {/* RIGHT PROFILE SECTION */}
-      {showProfile && selectedContact && (
-        <div style={styles.right}>
-          <div style={styles.profileHeader}>
-            <h3 style={styles.profileTitle}>Contact Profile</h3>
-            <button 
-              onClick={() => setShowProfile(false)}
-              style={styles.closeBtn}
-              title="Close Profile"
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              {isMobile && (
+                <IconButton onClick={handleBackToContacts}>
+                  <ArrowBackIcon />
+                </IconButton>
+              )}
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: getStatusColor(selectedContact.status),
+                    border: "2px solid white",
+                  },
+                }}
+              >
+                <Avatar sx={{ bgcolor: selectedContact.avatarColor }}>
+                  {getInitials(selectedContact.name)}
+                </Avatar>
+              </Badge>
+              <Box>
+                <Typography variant="h6">{selectedContact.name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {selectedContact.status} • {selectedContact.lastSeen}
+                </Typography>
+              </Box>
+            </Box>
+            <Button
+              variant="outlined"
+              startIcon={<PersonIcon />}
+              onClick={() => setShowProfile(!showProfile)}
+              sx={{ borderRadius: 20 }}
             >
-              ×
-            </button>
-          </div>
+              {showProfile ? "Hide Profile" : "Show Profile"}
+            </Button>
+          </Paper>
 
-          <div style={styles.profileContent}>
-            <div style={styles.profileAvatarContainer}>
-              <div 
-                style={{
-                  ...styles.profileAvatar,
-                  background: `linear-gradient(135deg, ${selectedContact.avatarColor}20, ${selectedContact.avatarColor})`
+          {/* Chat Messages */}
+          <Box sx={{ flex: 1, overflow: "auto", p: 3, bgcolor: "grey.50" }}>
+            {/* Welcome Message */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                mb: 4,
+                px: 2,
+              }}
+            >
+              <Avatar
+                sx={{
+                  width: 64,
+                  height: 64,
+                  bgcolor: selectedContact.avatarColor,
+                  mb: 2,
+                  fontSize: 24,
                 }}
               >
                 {getInitials(selectedContact.name)}
-              </div>
-              <div style={styles.profileStatus}>
-                <div 
+              </Avatar>
+              <Typography variant="h6" gutterBottom>
+                {selectedContact.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                This is the beginning of your conversation with {selectedContact.name}
+              </Typography>
+            </Box>
+
+            {/* Messages */}
+            {(messages[selectedId] || []).map((message, index) =>
+              renderMessageBubble(message, index)
+            )}
+          </Box>
+
+          {/* Message Input */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2,
+              borderTop: "1px solid",
+              borderColor: "divider",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              bgcolor: "background.paper",
+            }}
+          >
+            <IconButton>
+              <EmojiIcon />
+            </IconButton>
+            <TextField
+              fullWidth
+              placeholder={`Message ${selectedContact.name}...`}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              size="small"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 20,
+                  bgcolor: "grey.50",
+                },
+              }}
+            />
+            <IconButton
+              onClick={sendMessage}
+              disabled={!input.trim()}
+              sx={{
+                bgcolor: "primary.main",
+                color: "white",
+                "&:hover": { bgcolor: "primary.dark" },
+                "&.Mui-disabled": { bgcolor: "grey.400" },
+              }}
+            >
+              <SendIcon />
+            </IconButton>
+          </Paper>
+        </Box>
+      )}
+
+      {/* Profile Sidebar - Persistent Drawer */}
+      <Drawer
+        anchor="right"
+        open={showProfile}
+        onClose={() => setShowProfile(false)}
+        variant={isMobile ? "temporary" : "persistent"}
+        sx={{
+          // width: { xs: "100%", sm: 380, lg: 400 },
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: { xs: "100%", sm: 380, lg: 400 },
+            boxSizing: "border-box",
+            position: "fixed",
+            height: "100%",
+            right: 0,
+            top: 0,
+            borderLeft: "1px solid",
+            borderColor: "divider",
+          },
+        }}
+      >
+        {selectedContact && (
+          <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+            {/* Profile Header */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: 1,
+                 mt:7,
+                borderBottom: "1px solid",
+                borderColor: "divider",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                bgcolor: "background.paper",
+              }}
+            >
+              <Typography variant="body1" sx={{fontSize:"bold"}}>Contact Profile</Typography>
+              <IconButton onClick={() => setShowProfile(false)}>
+                <CloseIcon />
+              </IconButton>
+            </Paper>
+
+            {/* Profile Content */}
+            <Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
+              {/* Avatar */}
+              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 4 }}>
+                <Avatar
+                  sx={{
+                    width: { xs: 80, sm: 96 },
+                    height: { xs: 80, sm: 96 },
+                    bgcolor: selectedContact.avatarColor,
+                    mb: 2,
+                   
+                    fontSize: { xs: 28, sm: 32 },
+                  }}
+                >
+                  {getInitials(selectedContact.name)}
+                </Avatar>
+                <Chip
+                  label={selectedContact.status}
+                  size="small"
+                  sx={{
+                    bgcolor: `${getStatusColor(selectedContact.status)}20`,
+                    color: getStatusColor(selectedContact.status),
+                    "& .MuiChip-icon": {
+                      color: getStatusColor(selectedContact.status),
+                    },
+                  }}
+                  icon={
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        bgcolor: getStatusColor(selectedContact.status),
+                      }}
+                    />
+                  }
+                />
+              </Box>
+
+              {/* Contact Info */}
+              <Box sx={{ mb: 4 }}>
+                <InfoRow icon={<PersonIcon fontSize="small" />} label="Full Name" value={selectedContact.name} />
+                <InfoRow icon={<PhoneIcon fontSize="small" />} label="Phone Number" value={selectedContact.number} />
+                <InfoRow 
+                  icon={
+                    <Box 
+                      sx={{ 
+                        width: 8, 
+                        height: 8, 
+                        borderRadius: "50%", 
+                        bgcolor: getStatusColor(selectedContact.status) 
+                      }} 
+                    />
+                  } 
+                  label="Status" 
+                  value={selectedContact.status} 
+                />
+                <InfoRow icon={<TimeIcon fontSize="small" />} label="Last Seen" value={selectedContact.lastSeen} />
+                <InfoRow icon={<CalendarIcon fontSize="small" />} label="Contact Since" value="February 15, 2024" />
+              </Box>
+
+              {/* Action Buttons */}
+              <Grid container spacing={1} sx={{ mb: 4 }}>
+                <Grid item xs={4}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<PhoneIcon />}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    Call
+                  </Button>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<VideoIcon />}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    Video
+                  </Button>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<EmailIcon />}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    Email
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {/* Conversation Stats */}
+              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                Conversation Stats
+              </Typography>
+              <Grid container spacing={2} sx={{ mb: 4 }}>
+                <Grid item xs={4}>
+                  <Card variant="outlined" sx={{ textAlign: "center", height: "100%" }}>
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography variant="h5" color="primary">
+                        {(messages[selectedId] || []).length}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Total Messages
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={4}>
+                  <Card variant="outlined" sx={{ textAlign: "center", height: "100%" }}>
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography variant="h5" color="primary">
+                        {(messages[selectedId] || []).filter((m) => m.from === "contact").length}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        From Contact
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={4}>
+                  <Card variant="outlined" sx={{ textAlign: "center", height: "100%" }}>
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography variant="h5" color="primary">
+                        {(messages[selectedId] || []).filter((m) => m.from === "agent").length}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        From You
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+
+              {/* Notes Section */}
+              <Box>
+                <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                  Notes
+                </Typography>
+                <TextareaAutosize
+                  minRows={4}
+                  placeholder="Add notes about this contact..."
+                  defaultValue="Important client. Prefers morning calls."
                   style={{
-                    ...styles.profileStatusDot,
-                    background: selectedContact.status === "Online" ? "#10B981" : 
-                               selectedContact.status === "Away" ? "#F59E0B" : 
-                               selectedContact.status === "Busy" ? "#EF4444" : "#9CA3AF"
+                    width: "100%",
+                    padding: 12,
+                    borderRadius: 8,
+                    border: `1px solid ${theme.palette.divider}`,
+                    fontFamily: theme.typography.fontFamily,
+                    fontSize: theme.typography.body2.fontSize,
+                    resize: "vertical",
+                    marginBottom: 12,
                   }}
                 />
-                <span>{selectedContact.status}</span>
-              </div>
-            </div>
+                <Button fullWidth variant="contained" sx={{ borderRadius: 2 }}>
+                  Save Notes
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        )}
+      </Drawer>
 
-            <div style={styles.profileInfo}>
-              <div style={styles.infoSection}>
-                <label style={styles.infoLabel}>Full Name</label>
-                <div style={styles.infoValue}>{selectedContact.name}</div>
-              </div>
-
-              <div style={styles.infoSection}>
-                <label style={styles.infoLabel}>Phone Number</label>
-                <div style={styles.infoValue}>{selectedContact.number}</div>
-              </div>
-
-              <div style={styles.infoSection}>
-                <label style={styles.infoLabel}>Status</label>
-                <div style={styles.infoValue}>{selectedContact.status}</div>
-              </div>
-
-              <div style={styles.infoSection}>
-                <label style={styles.infoLabel}>Last Seen</label>
-                <div style={styles.infoValue}>{selectedContact.lastSeen}</div>
-              </div>
-
-              <div style={styles.infoSection}>
-                <label style={styles.infoLabel}>Contact Since</label>
-                <div style={styles.infoValue}>February 15, 2024</div>
-              </div>
-            </div>
-
-            <div style={styles.profileActions}>
-              <button style={styles.actionBtn}>
-                <span style={styles.actionIcon}>📞</span>
-                Call
-              </button>
-              <button style={styles.actionBtn}>
-                <span style={styles.actionIcon}>📹</span>
-                Video
-              </button>
-              <button style={styles.actionBtn}>
-                <span style={styles.actionIcon}>✉️</span>
-                Email
-              </button>
-            </div>
-
-            <div style={styles.statsSection}>
-              <h4 style={styles.statsTitle}>Conversation Stats</h4>
-              <div style={styles.statsGrid}>
-                <div style={styles.statCard}>
-                  <div style={styles.statNumber}>
-                    {(messages[selectedId] || []).length}
-                  </div>
-                  <div style={styles.statLabel}>Total Messages</div>
-                </div>
-                <div style={styles.statCard}>
-                  <div style={styles.statNumber}>
-                    {(messages[selectedId] || []).filter(m => m.from === "contact").length}
-                  </div>
-                  <div style={styles.statLabel}>From Contact</div>
-                </div>
-                <div style={styles.statCard}>
-                  <div style={styles.statNumber}>
-                    {(messages[selectedId] || []).filter(m => m.from === "agent").length}
-                  </div>
-                  <div style={styles.statLabel}>From You</div>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.notesSection}>
-              <h4 style={styles.notesTitle}>Notes</h4>
-              <textarea
-                placeholder="Add notes about this contact..."
-                style={styles.notesInput}
-                defaultValue={`Important client. Prefers morning calls.`}
-              />
-              <button style={styles.saveNotesBtn}>
-                Save Notes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      {/* Add Contact Dialog */}
+      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
+        <DialogTitle>Add New Contact</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Full Name"
+            fullWidth
+            value={newContact.name}
+            onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
+            sx={{ mb: 3 }}
+          />
+          <TextField
+            margin="dense"
+            label="Phone Number"
+            fullWidth
+            value={newContact.number}
+            onChange={(e) => setNewContact({ ...newContact, number: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAddDialog(false)}>Cancel</Button>
+          <Button onClick={handleAddContact} variant="contained">
+            Add Contact
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+    </>
   );
 }
 
-/* ---------------- STYLES ---------------- */
-
-const styles = {
-  page: {
-    display: "flex",
-    height: "100vh",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    background: "#f8fafc"
-  },
-
-  left: {
-    width: 320,
-    background: "white",
-    borderRight: "1px solid #e2e8f0",
-    display: "flex",
-    flexDirection: "column"
-  },
-
-  leftHeader: {
-    padding: "16px",
-    borderBottom: "1px solid #e2e8f0",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    background: "white"
-  },
-
-  searchContainer: {
-    flex: 1,
-    position: "relative",
-    display: "flex",
-    alignItems: "center"
-  },
-
-  searchIcon: {
-    position: "absolute",
-    left: "12px",
-    color: "#94a3b8",
-    fontSize: "14px"
-  },
-
-  searchInput: {
-    width: "100%",
-    padding: "8px 12px 8px 32px",
-    borderRadius: "20px",
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    fontSize: "14px",
-    outline: "none",
-    transition: "all 0.2s ease",
-    ":focus": {
-      borderColor: "#667eea",
-      boxShadow: "0 0 0 3px rgba(102, 126, 234, 0.1)"
-    }
-  },
-
-  clearSearch: {
-    position: "absolute",
-    right: "8px",
-    background: "none",
-    border: "none",
-    color: "#94a3b8",
-    cursor: "pointer",
-    fontSize: "18px",
-    padding: "0"
-  },
-
-  addBtn: {
-    width: "36px",
-    height: "36px",
-    borderRadius: "50%",
-    border: "none",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "20px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "transform 0.2s ease",
-    ":hover": {
-      transform: "scale(1.1)"
-    }
-  },
-
-  addIcon: {
-    display: "block",
-    lineHeight: "1"
-  },
-
-  contactList: {
-    flex: 1,
-    overflowY: "auto",
-    padding: "8px"
-  },
-
-  contact: {
-    display: "flex",
-    alignItems: "center",
-    padding: "12px",
-    borderRadius: "12px",
-    cursor: "pointer",
-    marginBottom: "4px",
-    transition: "all 0.2s ease",
-    position: "relative",
-    ":hover": {
-      background: "linear-gradient(135deg, #667eea20 0%, #764ba220 100%)"
-    }
-  },
-
-  avatar: {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: "12px",
-    fontWeight: "600",
-    fontSize: "14px",
-    flexShrink: "0"
-  },
-
-  contactInfo: {
-    flex: 1,
-    minWidth: "0"
-  },
-
-  contactName: {
-    display: "block",
-    fontSize: "14px",
-    fontWeight: "600",
-    marginBottom: "2px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis"
-  },
-
-  contactNumber: {
-    fontSize: "12px",
-    color: "inherit",
-    opacity: "0.8",
-    display: "block",
-    marginBottom: "4px"
-  },
-
-  statusContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "4px"
-  },
-
-  statusDot: {
-    width: "6px",
-    height: "6px",
-    borderRadius: "50%"
-  },
-
-  statusText: {
-    fontSize: "11px",
-    fontWeight: "500"
-  },
-
-  deleteBtn: {
-    background: "none",
-    border: "none",
-    color: "#ef4444",
-    cursor: "pointer",
-    fontSize: "14px",
-    padding: "4px",
-    opacity: "0.6",
-    transition: "opacity 0.2s ease",
-    ":hover": {
-      opacity: "1"
-    }
-  },
-
-  center: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    background: "white"
-  },
-
-  chatHeader: {
-    padding: "16px 20px",
-    borderBottom: "1px solid #e2e8f0",
-    background: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-
-  chatHeaderLeft: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px"
-  },
-
-  avatarBig: {
-    width: "48px",
-    height: "48px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-    fontWeight: "600",
-    fontSize: "16px",
-    flexShrink: "0"
-  },
-
-  contactDetails: {
-    display: "flex",
-    flexDirection: "column"
-  },
-
-  contactNameBig: {
-    fontSize: "16px",
-    fontWeight: "600",
-    color: "#1e293b"
-  },
-
-  contactStatus: {
-    fontSize: "12px",
-    color: "#64748b"
-  },
-
-  profileBtn: {
-    padding: "8px 16px",
-    borderRadius: "20px",
-    border: "1px solid #e2e8f0",
-    background: "white",
-    color: "#64748b",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    transition: "all 0.2s ease",
-    ":hover": {
-      background: "#f8fafc",
-      borderColor: "#cbd5e1"
-    }
-  },
-
-  chatBody: {
-    flex: 1,
-    padding: "20px",
-    background: "#f8fafc",
-    overflowY: "auto",
-    display: "flex",
-    flexDirection: "column"
-  },
-
-  welcomeMessage: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    padding: "32px 20px",
-    textAlign: "center",
-    marginBottom: "24px"
-  },
-
-  welcomeAvatar: {
-    width: "64px",
-    height: "64px",
-    borderRadius: "50%",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-    fontWeight: "600",
-    fontSize: "20px",
-    marginBottom: "16px"
-  },
-
-  welcomeText: {
-    maxWidth: "400px"
-  },
-
-  avatarSmall: {
-    width: "32px",
-    height: "32px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-    fontWeight: "600",
-    fontSize: "12px",
-    flexShrink: "0"
-  },
-
-  bubble: {
-    maxWidth: "65%",
-    padding: "12px 16px",
-    fontSize: "14px",
-    lineHeight: "1.4",
-    wordBreak: "break-word",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-  },
-
-  messageTime: {
-    fontSize: "11px",
-    color: "#94a3b8",
-    marginTop: "4px",
-    padding: "0 4px"
-  },
-
-  inputBar: {
-    padding: "16px 20px",
-    borderTop: "1px solid #e2e8f0",
-    background: "white",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
-  },
-
-  emojiBtn: {
-    background: "none",
-    border: "none",
-    fontSize: "20px",
-    cursor: "pointer",
-    padding: "8px",
-    borderRadius: "8px",
-    ":hover": {
-      background: "#f8fafc"
-    }
-  },
-
-  input: {
-    flex: 1,
-    padding: "12px 16px",
-    borderRadius: "24px",
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    fontSize: "14px",
-    outline: "none",
-    transition: "all 0.2s ease",
-    ":focus": {
-      borderColor: "#667eea",
-      boxShadow: "0 0 0 3px rgba(102, 126, 234, 0.1)"
-    }
-  },
-
-  sendBtn: {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    border: "none",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    color: "white",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "all 0.2s ease",
-    ":disabled": {
-      cursor: "not-allowed"
-    }
-  },
-
-  sendIcon: {
-    transform: "rotate(90deg)",
-    fontSize: "16px",
-    marginLeft: "2px"
-  },
-
-  right: {
-    width: "380px",
-    background: "white",
-    borderLeft: "1px solid #e2e8f0",
-    display: "flex",
-    flexDirection: "column",
-    boxShadow: "-2px 0 8px rgba(0,0,0,0.1)"
-  },
-
-  profileHeader: {
-    padding: "20px",
-    borderBottom: "1px solid #e2e8f0",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-
-  profileTitle: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#1e293b",
-    margin: "0"
-  },
-
-  closeBtn: {
-    width: "32px",
-    height: "32px",
-    borderRadius: "50%",
-    border: "none",
-    background: "#f1f5f9",
-    color: "#64748b",
-    cursor: "pointer",
-    fontSize: "20px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "all 0.2s ease",
-    ":hover": {
-      background: "#e2e8f0"
-    }
-  },
-
-  profileContent: {
-    flex: 1,
-    overflowY: "auto",
-    padding: "20px"
-  },
-
-  profileAvatarContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginBottom: "32px"
-  },
-
-  profileAvatar: {
-    width: "96px",
-    height: "96px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-    fontWeight: "600",
-    fontSize: "32px",
-    marginBottom: "16px",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.15)"
-  },
-
-  profileStatus: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "6px 16px",
-    borderRadius: "20px",
-    background: "#f8fafc",
-    fontSize: "14px",
-    fontWeight: "500"
-  },
-
-  profileStatusDot: {
-    width: "8px",
-    height: "8px",
-    borderRadius: "50%"
-  },
-
-  profileInfo: {
-    marginBottom: "32px"
-  },
-
-  infoSection: {
-    marginBottom: "20px"
-  },
-
-  infoLabel: {
-    display: "block",
-    fontSize: "12px",
-    color: "#64748b",
-    fontWeight: "500",
-    marginBottom: "6px",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px"
-  },
-
-  infoValue: {
-    fontSize: "14px",
-    color: "#1e293b",
-    fontWeight: "500",
-    padding: "8px 0",
-    borderBottom: "1px solid #f1f5f9"
-  },
-
-  profileActions: {
-    display: "flex",
-    gap: "8px",
-    marginBottom: "32px"
-  },
-
-  actionBtn: {
-    flex: 1,
-    padding: "12px",
-    borderRadius: "12px",
-    border: "1px solid #e2e8f0",
-    background: "white",
-    color: "#64748b",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-    transition: "all 0.2s ease",
-    ":hover": {
-      background: "#f8fafc",
-      borderColor: "#cbd5e1"
-    }
-  },
-
-  actionIcon: {
-    fontSize: "16px"
-  },
-
-  statsSection: {
-    marginBottom: "32px"
-  },
-
-  statsTitle: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#1e293b",
-    marginBottom: "16px",
-    paddingBottom: "8px",
-    borderBottom: "1px solid #f1f5f9"
-  },
-
-  statsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "12px"
-  },
-
-  statCard: {
-    padding: "16px",
-    borderRadius: "12px",
-    background: "#f8fafc",
-    textAlign: "center"
-  },
-
-  statNumber: {
-    fontSize: "20px",
-    fontWeight: "600",
-    color: "#1e293b",
-    marginBottom: "4px"
-  },
-
-  statLabel: {
-    fontSize: "11px",
-    color: "#64748b",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px"
-  },
-
-  notesSection: {
-    marginBottom: "20px"
-  },
-
-  notesTitle: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#1e293b",
-    marginBottom: "12px"
-  },
-
-  notesInput: {
-    width: "100%",
-    padding: "12px",
-    borderRadius: "12px",
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    fontSize: "14px",
-    minHeight: "80px",
-    resize: "vertical",
-    marginBottom: "12px",
-    outline: "none",
-    transition: "all 0.2s ease",
-    ":focus": {
-      borderColor: "#667eea",
-      boxShadow: "0 0 0 3px rgba(102, 126, 234, 0.1)"
-    }
-  },
-
-  saveNotesBtn: {
-    width: "100%",
-    padding: "12px",
-    borderRadius: "12px",
-    border: "none",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-    transition: "opacity 0.2s ease",
-    ":hover": {
-      opacity: "0.9"
-    }
-  }
-};
+// Helper component for profile info rows
+function InfoRow({ icon, label, value }) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+      <Box sx={{ width: 40, display: "flex", justifyContent: "center", alignItems: "center" }}>
+        {icon}
+      </Box>
+      <Box sx={{ flex: 1 }}>
+        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
+          {label}
+        </Typography>
+        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          {value}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
