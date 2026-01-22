@@ -28,7 +28,9 @@ import {
   People,
   Timer,
   VerifiedUser,
+
 } from "@mui/icons-material";
+import LinkIcon from '@mui/icons-material/Link';
 
 export function DashboardD() {
   const theme = useTheme();
@@ -522,7 +524,8 @@ export function DashboardD() {
                     Connecting...
                   </>
                 ) : (
-                  "Connect WhatsApp"
+                  <><LinkIcon size={16}
+                      sx={{ color: "white", mr: 1 }} /> Connect WhatsApp</>
                 )}
               </Button>
             </Box>
