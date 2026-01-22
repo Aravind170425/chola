@@ -12,7 +12,10 @@ import { Box } from "@mui/material";
 import WhatsappBulkSender from "./WhatsappBulkSender.jsx";
 import { DashboardLayout } from "./pages/DashboardLayout.jsx";
 import { DashboardHome } from "./componet/Dashboard/DashboardHome.jsx";
+import { DashboardD } from "./componet/Dashboard/DashboardD.jsx";
 import { ProtectedRoute } from "./pages/ProtectedRoute.jsx";
+import WhatsappSuccess from "./pages/WhatsappSucess.jsx";
+import Chat from "./pages/chat.jsx";
 
 function App() {
   const location = useLocation();
@@ -40,8 +43,11 @@ function App() {
     </ProtectedRoute>
   }
 >
-  <Route index element={<DashboardHome />} />
+  {/* <Route index element={<DashboardHome />} /> */}
+   <Route index element={<DashboardD/>} />
   <Route path="whatsapp" element={<WhatsappBulkSender />} />
+    <Route path="success" element={<WhatsappSuccess />} />
+      <Route path="chat" element={<Chat />} />
 </Route>
 
         
