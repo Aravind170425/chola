@@ -28,7 +28,9 @@ import {
   People,
   Timer,
   VerifiedUser,
+
 } from "@mui/icons-material";
+import LinkIcon from '@mui/icons-material/Link';
 
 export function DashboardD() {
   const theme = useTheme();
@@ -165,7 +167,7 @@ export function DashboardD() {
           {/* Features Title */}
           <Typography
             variant="h5"
-            gutterBottom
+            gutterBottom 
             sx={{
               color: "#128C7E",
               fontWeight: 700,
@@ -303,7 +305,7 @@ export function DashboardD() {
                 fontSize: { xs: "1.8rem", md: "1.5rem" },
               }}
             >
-              Why Connect with Chola Biz?
+              Why Connect with Chola Business Automation ?
             </Typography>
 
             <Grid
@@ -353,10 +355,7 @@ export function DashboardD() {
                         height: 32,
                         borderRadius: "50%",
                         flexShrink: 0,
-                        backgroundColor: alpha(
-                          benefit.icon.props.sx?.color || "#25D366",
-                          0.12,
-                        ),
+                    
                       }}
                     >
                       {benefit.icon}
@@ -513,7 +512,8 @@ export function DashboardD() {
                   },
                 }}
               >
-                {loading ? (
+                {/* {loading ? (
+
                   <>
                     <CircularProgress
                       size={16}
@@ -521,9 +521,10 @@ export function DashboardD() {
                     />
                     Connecting...
                   </>
-                ) : (
-                  "Connect WhatsApp"
-                )}
+                ) : ( */}
+                  <><LinkIcon size={16}
+                      sx={{ color: "white", mr: 1 }} /> Connect WhatsApp</>
+                {/* )} */}
               </Button>
             </Box>
           </Box>

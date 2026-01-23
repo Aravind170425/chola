@@ -28,6 +28,10 @@ import {
   Drawer,
   Snackbar,
   Alert,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -45,6 +49,7 @@ import {
   CalendarToday as CalendarIcon,
   Close as CloseIcon,
   AttachFile as AttachFileIcon,
+  ArrowDropDown as ArrowDropDownIcon,
 } from "@mui/icons-material";
 import { DashboardSidebar } from "../componet/Dashboard/DashboardSidebar";
 
@@ -59,68 +64,38 @@ export default function Inbox() {
     severity: "success",
   });
 
-  const [contacts, setContacts] = useState([
-    {
-      id: 1,
-      number: "+91 7449213799",
-      name: "John Doe",
-      status: "Online",
-      lastSeen: "Just now",
-      avatarColor: "#FF6B6B",
-    },
-    {
-      id: 2,
-      number: "+91 9123456789",
-      name: "Jane Smith",
-      status: "Away",
-      lastSeen: "5 min ago",
-      avatarColor: "#4ECDC4",
-    },
-    {
-      id: 3,
-      number: "+1 5551234561",
-      name: "Robert Johnson",
-      status: "Offline",
-      lastSeen: "2 hours ago",
-      avatarColor: "#45B7D1",
-    },
-    {
-      id: 4,
-      number: "+44 7712345678",
-      name: "Emma Wilson",
-      status: "Online",
-      lastSeen: "Just now",
-      avatarColor: "#96CEB4",
-    },
-    {
-      id: 5,
-      number: "+91 9988776655",
-      name: "Alex Turner",
-      status: "Busy",
-      lastSeen: "30 min ago",
-      avatarColor: "#FFEAA7",
-    },
-  ]);
+  // Country codes
+  const countryCodes = [
+    { code: "+91", flag: "🇮🇳", country: "India" },
+    { code: "+1", flag: "🇺🇸", country: "USA" },
+    { code: "+44", flag: "🇬🇧", country: "UK" },
+    { code: "+61", flag: "🇦🇺", country: "Australia" },
+    { code: "+65", flag: "🇸🇬", country: "Singapore" },
+    { code: "+971", flag: "🇦🇪", country: "UAE" },
+    { code: "+33", flag: "🇫🇷", country: "France" },
+    { code: "+49", flag: "🇩🇪", country: "Germany" },
+    { code: "+81", flag: "🇯🇵", country: "Japan" },
+    { code: "+86", flag: "🇨🇳", country: "China" },
+  ];
 
-  const [selectedId, setSelectedId] = useState(1);
-  const [messages, setMessages] = useState({
-    1: [
-      { from: "agent", text: "Hello! How can I help you today?", time: "10:00 AM" },
-      { from: "contact", text: "I need help with my order", time: "10:02 AM" },
-      { from: "agent", text: "Sure, can you provide your order ID?", time: "10:03 AM" },
-    ],
-    2: [{ from: "contact", text: "Hi there!", time: "Yesterday" }],
-  });
+  // Start with empty contacts
+  const [contacts, setContacts] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const [messages, setMessages] = useState({});
   const [input, setInput] = useState("");
-  const [showProfile, setShowProfile] = useState(true); // Always show profile
+  const [showProfile, setShowProfile] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
-  const [newContact, setNewContact] = useState({ name: "", number: "" });
+  const [newContact, setNewContact] = useState({ 
+    name: "", 
+    number: "",
+    countryCode: "+91" // Default to India
+  });
   const [showContactsOnMobile, setShowContactsOnMobile] = useState(true);
   const [messageType, setMessageType] = useState("text");
   const [selectedTemplate, setSelectedTemplate] = useState("jaspers_market_order_confirmation_v1");
-  const [templateParams, setTemplateParams] = useState(["John Doe", "ORD-123456", "Jan 22, 2026"]);
+  const [templateParams, setTemplateParams] = useState(["", "", ""]);
   
   // Available templates
   const availableTemplates = [
@@ -145,18 +120,6 @@ export default function Inbox() {
   ];
 
   const selectedContact = contacts.find((c) => c.id === selectedId);
-
-  // Initialize messages for new contacts
-  useEffect(() => {
-    contacts.forEach((contact) => {
-      if (!messages[contact.id]) {
-        setMessages((prev) => ({
-          ...prev,
-          [contact.id]: [],
-        }));
-      }
-    });
-  }, [contacts]);
 
   // Function to send message via WhatsApp API
   const sendWhatsAppMessage = async (messageData) => {
@@ -191,22 +154,37 @@ export default function Inbox() {
       return;
     }
 
+    if (!selectedContact) {
+      setSnackbar({
+        open: true,
+        message: "Please select a contact first",
+        severity: "warning",
+      });
+      return;
+    }
+
     try {
       const now = new Date();
       const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
       if (messageType === "template" && selectedContact) {
-        // Prepare template parameters
-        const params = selectedTemplate === "jaspers_market_order_confirmation_v1" 
-          ? templateParams 
-          : ["John Doe", "ORD-123456", "Jan 22, 2026"];
+        // Check if all template parameters are filled
+        const emptyParams = templateParams.filter(param => !param.trim());
+        if (emptyParams.length > 0) {
+          setSnackbar({
+            open: true,
+            message: "Please fill in all template parameters",
+            severity: "warning",
+          });
+          return;
+        }
 
         // Prepare WhatsApp message data
         const whatsappData = {
           to: selectedContact.number.replace(/\D/g, ''),
           type: "template",
           templateName: selectedTemplate,
-          templateParams: params,
+          templateParams: templateParams,
         };
 
         // Send via API
@@ -224,7 +202,7 @@ export default function Inbox() {
             time,
             isTemplate: true,
             templateName: selectedTemplate,
-            templateParams: params
+            templateParams: templateParams
           }],
         }));
 
@@ -233,6 +211,9 @@ export default function Inbox() {
           message: `Template "${templateDisplay?.displayName}" sent successfully!`,
           severity: "success",
         });
+        
+        // Clear template params
+        setTemplateParams(["", "", ""]);
       } else {
         // Send regular text message
         setMessages((prev) => ({
@@ -274,23 +255,39 @@ export default function Inbox() {
       return;
     }
 
+    // Validate phone number (basic validation)
+    const phoneNumber = newContact.number.replace(/\D/g, '');
+    if (phoneNumber.length < 10) {
+      setSnackbar({
+        open: true,
+        message: "Please enter a valid phone number",
+        severity: "warning",
+      });
+      return;
+    }
+
     const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8"];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-    setContacts((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        number: newContact.number,
-        name: newContact.name,
-        status: "Offline",
-        lastSeen: "Never",
-        avatarColor: randomColor,
-      },
-    ]);
+    const newId = Date.now();
+    const newContactObj = {
+      id: newId,
+      number: `${newContact.countryCode} ${newContact.number}`,
+      name: newContact.name,
+      status: "Online", // Set to Online by default
+      lastSeen: "Just now",
+      avatarColor: randomColor,
+      countryCode: newContact.countryCode,
+    };
 
-    setNewContact({ name: "", number: "" });
+    setContacts((prev) => [...prev, newContactObj]);
+    setSelectedId(newId);
+    setNewContact({ name: "", number: "", countryCode: "+91" }); // Reset with India as default
     setOpenAddDialog(false);
+    
+    if (isMobile) {
+      setShowContactsOnMobile(false);
+    }
     
     setSnackbar({
       open: true,
@@ -305,6 +302,9 @@ export default function Inbox() {
       if (selectedId === id) {
         const remainingContacts = contacts.filter((c) => c.id !== id);
         setSelectedId(remainingContacts[0]?.id || null);
+        if (isMobile && remainingContacts.length === 0) {
+          setShowContactsOnMobile(true);
+        }
       }
       
       setSnackbar({
@@ -320,20 +320,6 @@ export default function Inbox() {
     setOpenTemplateDialog(true);
   };
 
-  const handleSendTemplate = () => {
-    // Check if all template parameters are filled
-    const emptyParams = templateParams.filter(param => !param.trim());
-    if (emptyParams.length > 0) {
-      setSnackbar({
-        open: true,
-        message: "Please fill in all template parameters",
-        severity: "warning",
-      });
-      return;
-    }
-    sendMessage();
-  };
-
   const filteredContacts = contacts.filter(
     (contact) =>
       contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -343,11 +329,13 @@ export default function Inbox() {
   const getStatusColor = (status) => {
     switch (status) {
       case "Online":
-        return "#10B981";
+        return "#10B981"; // Green
       case "Away":
-        return "#F59E0B";
+        return "#F59E0B"; // Amber
       case "Busy":
-        return "#EF4444";
+        return "#EF4444"; // Red
+      case "Offline":
+        return "#9CA3AF"; // Gray
       default:
         return "#9CA3AF";
     }
@@ -371,6 +359,22 @@ export default function Inbox() {
 
   const handleBackToContacts = () => {
     setShowContactsOnMobile(true);
+  };
+
+  // Format phone number for display
+  const formatPhoneNumber = (phoneNumber) => {
+    const countryCode = phoneNumber.split(' ')[0];
+    const number = phoneNumber.split(' ').slice(1).join(' ');
+    return (
+      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+        <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 500 }}>
+          {countryCode}
+        </Typography>
+        <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
+          {number}
+        </Typography>
+      </Box>
+    );
   };
 
   const renderMessageBubble = (message, index) => (
@@ -526,106 +530,121 @@ export default function Inbox() {
             </Box>
 
             <List sx={{ flex: 1, overflow: "auto", p: 0.5 }}>
-              {filteredContacts.map((contact) => (
-                <ListItem
-                  key={contact.id}
-                  button
-                  selected={selectedId === contact.id}
-                  onClick={() => handleContactSelect(contact.id)}
-                  sx={{
-                    borderRadius: 1.5,
-                    mb: 0.5,
-                    px: 1.5,
-                    py: 1,
-                    "&.Mui-selected": {
-                      bgcolor: "primary.main",
-                      color: "white",
-                      "&:hover": { bgcolor: "primary.dark" },
-                    },
-                  }}
-                >
-                  <ListItemAvatar sx={{ minWidth: 40 }}>
-                    <Badge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                      variant="dot"
-                      sx={{
-                        "& .MuiBadge-badge": {
-                          backgroundColor: getStatusColor(contact.status),
-                          border: "1.5px solid white",
-                          width: 10,
-                          height: 10,
-                          minWidth: 10,
-                        },
-                      }}
-                    >
-                      <Avatar 
-                        sx={{ 
-                          bgcolor: contact.avatarColor,
-                          width: 32,
-                          height: 32,
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        {getInitials(contact.name)}
-                      </Avatar>
-                    </Badge>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={
-                      <Typography variant="subtitle2" noWrap sx={{ fontSize: '0.875rem', fontWeight: 500 }}>
-                        {contact.name}
-                      </Typography>
-                    }
-                    secondary={
-                      <>
-                        <Typography variant="caption" display="block" noWrap sx={{ fontSize: '0.75rem' }}>
-                          {contact.number}
-                        </Typography>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.25 }}>
-                          <Box
-                            sx={{
-                              width: 5,
-                              height: 5,
-                              borderRadius: "50%",
-                              bgcolor: getStatusColor(contact.status),
-                            }}
-                          />
-                          <Typography variant="caption" sx={{ fontSize: '0.7rem' }}>
-                            {contact.status} • {contact.lastSeen}
-                          </Typography>
-                        </Box>
-                      </>
-                    }
+              {filteredContacts.length === 0 ? (
+                <Box sx={{ textAlign: "center", p: 4 }}>
+                  <Typography color="text.secondary" variant="body2" sx={{ fontSize: '0.875rem' }}>
+                    {searchQuery ? "No contacts found" : "No contacts yet"}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<AddIcon />}
+                    onClick={() => setOpenAddDialog(true)}
+                    sx={{ mt: 2, fontSize: '0.75rem' }}
+                  >
+                    Add your first contact
+                  </Button>
+                </Box>
+              ) : (
+                filteredContacts.map((contact) => (
+                  <ListItem
+                    key={contact.id}
+                    button
+                    selected={selectedId === contact.id}
+                    onClick={() => handleContactSelect(contact.id)}
                     sx={{
-                      "& .MuiListItemText-secondary": {
-                        color: selectedId === contact.id ? "rgba(67, 64, 64, 0.7)" : "text.secondary",
+                      borderRadius: 1.5,
+                      mb: 0.5,
+                      px: 1.5,
+                      py: 1,
+                      "&.Mui-selected": {
+                        bgcolor: "primary.main",
+                        color: "white",
+                        "&:hover": { bgcolor: "primary.dark" },
                       },
                     }}
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      edge="end"
-                      size="small"
-                      onClick={() => deleteContact(contact.id)}
+                  >
+                    <ListItemAvatar sx={{ minWidth: 40 }}>
+                      <Badge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                        variant="dot"
+                        sx={{
+                          "& .MuiBadge-badge": {
+                            backgroundColor: getStatusColor(contact.status),
+                            border: "1.5px solid white",
+                            width: 10,
+                            height: 10,
+                            minWidth: 10,
+                          },
+                        }}
+                      >
+                        <Avatar 
+                          sx={{ 
+                            bgcolor: contact.avatarColor,
+                            width: 32,
+                            height: 32,
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          {getInitials(contact.name)}
+                        </Avatar>
+                      </Badge>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle2" noWrap sx={{ fontSize: '0.875rem', fontWeight: 500 }}>
+                          {contact.name}
+                        </Typography>
+                      }
+                      secondary={
+                        <>
+                          {formatPhoneNumber(contact.number)}
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.25 }}>
+                            <Box
+                              sx={{
+                                width: 5,
+                                height: 5,
+                                borderRadius: "50%",
+                                bgcolor: getStatusColor(contact.status),
+                              }}
+                            />
+                            <Typography variant="caption" sx={{ fontSize: '0.7rem' }}>
+                              {contact.status} • {contact.lastSeen}
+                            </Typography>
+                          </Box>
+                        </>
+                      }
                       sx={{
-                        color: selectedId === contact.id ? "white" : "error.main",
-                        opacity: 0.7,
-                        "&:hover": { opacity: 1 },
-                        p: 0.5,
+                        "& .MuiListItemText-secondary": {
+                          color: selectedId === contact.id ? "rgba(67, 64, 64, 0.7)" : "text.secondary",
+                        },
                       }}
-                    >
-                      <DeleteIcon sx={{ fontSize: '0.9rem' }} />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        size="small"
+                        onClick={() => deleteContact(contact.id)}
+                        sx={{
+                          color: selectedId === contact.id ? "white" : "error.main",
+                          opacity: 0.7,
+                          "&:hover": { opacity: 1 },
+                          p: 0.5,
+                        }}
+                      >
+                        <DeleteIcon sx={{ fontSize: '0.9rem' }} />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))
+              )}
             </List>
           </Paper>
         )}
 
-        {/* Main Chat Area */}
-        {shouldShowChat && selectedContact && (
+        {/* Main Chat Area - Show empty state if no contact selected */}
+        {shouldShowChat && selectedContact ? (
           <Box
             sx={{
               flex: 1,
@@ -721,8 +740,16 @@ export default function Inbox() {
               </Box>
 
               {/* Messages */}
-              {(messages[selectedId] || []).map((message, index) =>
-                renderMessageBubble(message, index)
+              {(messages[selectedId] || []).length === 0 ? (
+                <Box sx={{ textAlign: "center", py: 8 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                    No messages yet. Start the conversation!
+                  </Typography>
+                </Box>
+              ) : (
+                (messages[selectedId] || []).map((message, index) =>
+                  renderMessageBubble(message, index)
+                )
               )}
             </Box>
 
@@ -840,21 +867,39 @@ export default function Inbox() {
               </Box>
             </Paper>
           </Box>
-        )}
+        ) : shouldShowChat && !selectedContact ? (
+          // Empty state when no contact is selected
+          <Box sx={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3 }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom sx={{ fontSize: '1rem' }}>
+              No contact selected
+            </Typography>
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ fontSize: '0.875rem', mb: 3 }}>
+              Select a contact from the list or add a new one to start chatting
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setOpenAddDialog(true)}
+              sx={{ fontSize: '0.875rem' }}
+            >
+              Add New Contact
+            </Button>
+          </Box>
+        ) : null}
 
-        {/* Profile Sidebar - ALWAYS VISIBLE */}
-        <Box
-          sx={{
-            width: { xs: 0, md: 320 }, // Hidden on mobile, visible on desktop
-            display: { xs: 'none', md: 'block' },
-            borderLeft: "1px solid",
-            borderColor: "divider",
-            bgcolor: "background.paper",
-            height: "100%",
-            overflow: "auto",
-          }}
-        >
-          {selectedContact && (
+        {/* Profile Sidebar - ALWAYS VISIBLE when contact selected */}
+        {selectedContact && (
+          <Box
+            sx={{
+              width: { xs: 0, md: 320 }, // Hidden on mobile, visible on desktop
+              display: { xs: 'none', md: 'block' },
+              borderLeft: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
+              height: "100%",
+              overflow: "auto",
+            }}
+          >
             <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
               {/* Profile Header */}
               <Box
@@ -935,7 +980,7 @@ export default function Inbox() {
                     value={selectedContact.status} 
                   />
                   <InfoRow icon={<TimeIcon sx={{ fontSize: '0.9rem' }} />} label="Last Seen" value={selectedContact.lastSeen} />
-                  <InfoRow icon={<CalendarIcon sx={{ fontSize: '0.9rem' }} />} label="Contact Since" value="Feb 15, 2024" />
+                  <InfoRow icon={<CalendarIcon sx={{ fontSize: '0.9rem' }} />} label="Contact Since" value="Just added" />
                 </Box>
 
                 {/* Action Buttons */}
@@ -1026,7 +1071,6 @@ export default function Inbox() {
                   <TextareaAutosize
                     minRows={4}
                     placeholder="Add notes about this contact..."
-                    defaultValue="Important client. Prefers morning calls."
                     style={{
                       width: "100%",
                       padding: 10,
@@ -1044,13 +1088,13 @@ export default function Inbox() {
                 </Box>
               </Box>
             </Box>
-          )}
-        </Box>
+          </Box>
+        )}
 
         {/* Mobile Profile Drawer */}
         <Drawer
           anchor="right"
-          open={showProfile && isMobile}
+          open={showProfile && isMobile && !!selectedContact}
           onClose={() => setShowProfile(false)}
           variant="temporary"
           sx={{
@@ -1144,7 +1188,7 @@ export default function Inbox() {
                     value={selectedContact.status} 
                   />
                   <InfoRow icon={<TimeIcon sx={{ fontSize: '0.9rem' }} />} label="Last Seen" value={selectedContact.lastSeen} />
-                  <InfoRow icon={<CalendarIcon sx={{ fontSize: '0.9rem' }} />} label="Contact Since" value="Feb 15, 2024" />
+                  <InfoRow icon={<CalendarIcon sx={{ fontSize: '0.9rem' }} />} label="Contact Since" value="Just added" />
                 </Box>
 
                 {/* Action Buttons */}
@@ -1235,7 +1279,6 @@ export default function Inbox() {
                   <TextareaAutosize
                     minRows={4}
                     placeholder="Add notes about this contact..."
-                    defaultValue="Important client. Prefers morning calls."
                     style={{
                       width: "100%",
                       padding: 10,
@@ -1256,7 +1299,7 @@ export default function Inbox() {
           )}
         </Drawer>
 
-        {/* Add Contact Dialog */}
+        {/* Add Contact Dialog with Country Code Selector */}
         <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} maxWidth="xs" fullWidth>
           <DialogTitle sx={{ fontSize: '1rem', pb: 1 }}>Add New Contact</DialogTitle>
           <DialogContent>
@@ -1270,15 +1313,59 @@ export default function Inbox() {
               onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
               sx={{ mb: 2 }}
             />
-            <TextField
-              margin="dense"
-              label="Phone Number"
-              fullWidth
-              size="small"
-              value={newContact.number}
-              onChange={(e) => setNewContact({ ...newContact, number: e.target.value })}
-              placeholder="+91917449213799"
-            />
+            
+            <Box sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}>
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel id="country-code-label">Country Code</InputLabel>
+                <Select
+                  labelId="country-code-label"
+                  value={newContact.countryCode}
+                  label="Country Code"
+                  onChange={(e) => setNewContact({ ...newContact, countryCode: e.target.value })}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 200,
+                      },
+                    },
+                  }}
+                >
+                  {countryCodes.map((country) => (
+                    <MenuItem key={country.code} value={country.code}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Typography sx={{ fontSize: '1.2rem' }}>{country.flag}</Typography>
+                        <Typography sx={{ fontSize: '0.875rem' }}>{country.code}</Typography>
+                        <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', ml: 1 }}>
+                          {country.country}
+                        </Typography>
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              
+              <TextField
+                margin="dense"
+                label="Phone Number"
+                fullWidth
+                size="small"
+                value={newContact.number}
+                onChange={(e) => {
+                  // Allow only numbers
+                  const value = e.target.value.replace(/\D/g, '');
+                  setNewContact({ ...newContact, number: value });
+                }}
+                placeholder="9876543210"
+                inputProps={{
+                  maxLength: 15,
+                  pattern: "[0-9]*",
+                }}
+              />
+            </Box>
+            
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block", fontSize: '0.75rem' }}>
+              Default status: <Chip label="Online" size="small" sx={{ height: 20, fontSize: '0.7rem', bgcolor: '#10B98120', color: '#10B981' }} />
+            </Typography>
           </DialogContent>
           <DialogActions sx={{ p: 2, pt: 1 }}>
             <Button onClick={() => setOpenAddDialog(false)} size="small" sx={{ fontSize: '0.75rem' }}>
@@ -1337,7 +1424,7 @@ export default function Inbox() {
             <Button onClick={() => setOpenTemplateDialog(false)} size="small" sx={{ fontSize: '0.75rem' }}>
               Cancel
             </Button>
-            <Button onClick={handleSendTemplate} variant="contained" size="small" sx={{ fontSize: '0.75rem' }}>
+            <Button onClick={sendMessage} variant="contained" size="small" sx={{ fontSize: '0.75rem' }}>
               Send Template
             </Button>
           </DialogActions>

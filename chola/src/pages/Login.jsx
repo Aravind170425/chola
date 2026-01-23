@@ -16,8 +16,8 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const VALID_EMAIL = "chola@gmail.com";
-  const VALID_PASSWORD = "chola@123";
+  const VALID_EMAIL = "mrfranchise22@gmail.com";
+  const VALID_PASSWORD = "mrfranchise@123";
 
   const handleLogin = () => {
     setError("");
