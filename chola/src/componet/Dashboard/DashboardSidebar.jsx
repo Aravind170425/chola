@@ -410,8 +410,7 @@ export function DashboardSidebar({ onMenuClick }) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.main }}>
-                U
+              <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.main }}>            
               </Avatar>
             </IconButton>
           </Box>
@@ -427,61 +426,3 @@ export function DashboardSidebar({ onMenuClick }) {
     </>
   );
 }
-
-// Main Layout Component with Navbar and Sidebar
-// export function DashboardLayout({ children }) {
-//   const [mobileOpen, setMobileOpen] = useState(false);
-
-//   const handleDrawerToggle = () => {
-//     setMobileOpen(!mobileOpen);
-//   };
-
-//   return (
-//     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-//       <Navbar onMenuClick={handleDrawerToggle} />
-      
-//       {/* Sidebar (can be made responsive/drawer for mobile) */}
-//       <Box
-//         component="nav"
-//         sx={{
-//           width: { md: 240 },
-//           flexShrink: { md: 0 },
-//         }}
-//       >
-//         {/* Mobile drawer can be implemented here */}
-//       </Box>
-      
-//       {/* Main content */}
-//       <Box
-//         component="main"
-//         sx={{
-//           flexGrow: 1,
-//           p: 3,
-//           width: { md: `calc(100% - 240px)` },
-//         }}
-//       >
-//         {children}
-//       </Box>
-//     </Box>
-//   );
-// }
-
-// Usage example in App.jsx:
-/*
-import { DashboardLayout } from './components/Navbar';
-import { DashboardSidebar } from './components/DashboardSidebar';
-
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="dashboard/whatsapp" element={<WhatsAppBulkSender />} />
-        </Route>
-      </Routes>
-    </Router>
-  );
-}
-*/

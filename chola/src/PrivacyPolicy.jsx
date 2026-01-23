@@ -85,7 +85,7 @@ const PrivacyPolicy = () => {
         <Section title="Contact Information">
           <p style={styles.text}>
             For any privacy-related questions or requests, please contact us at{" "}
-            <a href="mailto:support@cholabiz.co" style={styles.link}>
+            <a href="mailto:support@cholabiz.com" style={styles.link}>
               support@cholabiz.com
             </a>
           </p>
