@@ -401,18 +401,24 @@ export function DashboardSidebar({ onMenuClick }) {
             </IconButton>
 
             {/* Profile */}
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
+        <Avatar
+              sx={{
+                width: 40,
+                height: 40,
+                bgcolor: "#ff7a45",
+                fontWeight: 600,
+                fontSize: "1rem",
+              }}
             >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.main }}>            
-              </Avatar>
-            </IconButton>
+              M
+            </Avatar>
+
+            <Box sx={{ display: { xs: "none", md: "block" } }}>
+              <Typography variant="body2" fontWeight={600} color="#333">
+                MR FRANCHISE 
+              </Typography>
+            </Box>
+
           </Box>
         </Toolbar>
       </AppBar>

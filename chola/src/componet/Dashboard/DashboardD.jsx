@@ -305,7 +305,7 @@ export function DashboardD() {
                 fontSize: { xs: "1.8rem", md: "1.5rem" },
               }}
             >
-              Why Connect with Chola Biz?
+              Why Connect with Chola Business Automation ?
             </Typography>
 
             <Grid

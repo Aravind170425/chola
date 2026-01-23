@@ -2,9 +2,9 @@ export default function WhatsappSuccess() {
   const connectionData = {
     business_id: "123456789012345",
     waba_id: "987654321098765",
-    phone_number_id: "+1 555-666-7777",
+    // phone_number_id: "+91 744",
     status: "CONNECTED",
-    environment: "Sandbox"
+    environment: "Whatsapp Cloud API "
   };
 
   return (
@@ -13,9 +13,9 @@ export default function WhatsappSuccess() {
         <div style={styles.successIcon}>✓</div>
         <h1 style={styles.title}>WhatsApp Business API Connected</h1>
         <p style={styles.subtitle}>
-          Test environment connected successfully. Ready for review submission.
+          Whatsapp business Account connected successfully! You can now start sending messages and managing your WhatsApp communications through our platform.
         </p>
-        <div style={styles.demoBadge}>DEMO - FOR REVIEW PURPOSES</div>
+        {/* <div style={styles.demoBadge}>DEMO - FOR REVIEW PURPOSES</div> */}
       </div>
 
       <div style={styles.contentGrid}>
@@ -28,7 +28,7 @@ export default function WhatsappSuccess() {
           </div>
           
           <p style={styles.cardDescription}>
-            This is a test connection using Meta's development environment for app review purposes.
+            This is a Mr Franchise connection using Meta's WhatsApp Cloud API through the Embedded SignUp prcess
           </p>
 
           <div style={styles.detailsGrid}>
@@ -43,9 +43,9 @@ export default function WhatsappSuccess() {
             </div>
             
             <div style={styles.detailItem}>
-              <label style={styles.detailLabel}>Phone Number</label>
+              {/* <label style={styles.detailLabel}>Phone Number</label> */}
               <div style={styles.detailValue}>{connectionData.phone_number_id}</div>
-              <div style={styles.testNote}>(Test Number - Not Active)</div>
+
             </div>
             
             <div style={styles.detailItem}>
@@ -56,22 +56,17 @@ export default function WhatsappSuccess() {
               </div>
             </div>
           </div>
-          <div style={styles.demoNotice}>
-            Test Data - For App Review Only
-          </div>
         </div>
 
         <div style={styles.sidePanel}>
           <div style={styles.featureCard}>
             <h4 style={styles.featureTitle}>🎯 What's Next?</h4>
             <ul style={styles.featureList}>
-              <li style={styles.featureItem}>Send test message (Demo)</li>
+              <li style={styles.featureItem}>Send test message </li>
               <li style={styles.featureItem}>Configure message templates</li>
               <li style={styles.featureItem}>Set up automated responses</li>
             </ul>
-            <div style={styles.featureNote}>
-              All actions are simulated for review
-            </div>
+         
           </div>
 
           <div style={styles.featureCard}>
@@ -82,9 +77,7 @@ export default function WhatsappSuccess() {
               <li style={styles.featureItem}>Display name approval</li>
               <li style={styles.featureItem}>Privacy policy URL</li>
             </ul>
-            <div style={styles.featureNote}>
-              Not required for this demo
-            </div>
+           
           </div>
         </div>
       </div>
@@ -104,12 +97,7 @@ export default function WhatsappSuccess() {
         </a>
       </div>
 
-      <div style={styles.footerNote}>
-        <p style={styles.noteText}>
-          ⓘ This sandbox environment demonstrates WhatsApp Business API functionality for review purposes only.
-          No real messages will be sent to users. All interactions are simulated.
-        </p>
-      </div>
+
     </div>
   );
 }

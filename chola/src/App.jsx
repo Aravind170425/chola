@@ -21,12 +21,17 @@ import { DummyNav } from "./pages/DummyNav.jsx";
 function App() {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith("/dashboard");
+  const isChatPage = location.pathname === "/dashboard/chat";
 
   return (
-    <>
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {!isDashboard ? <Navbar /> : <DummyNav />}
-      {/* {isDashboard && <DummyNav/>} */}
+      {/* Show DummyNav only for dashboard pages EXCEPT chat */}
+      {isDashboard && !isChatPage && <DummyNav />}
+      
+      {/* Show regular Navbar for non-dashboard pages */}
+      {!isDashboard && <Navbar />}
+      
+      {/* Chat page gets no navbar */}
 
       <Box component="main" sx={{ flex: 1 }}>
         <Routes>
@@ -37,28 +42,27 @@ function App() {
           <Route path="/terms-and-services" element={<TermsandServices />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-<Route
-  path="/dashboard"
-  element={
-    <ProtectedRoute>
-      <DashboardLayout />
-    </ProtectedRoute>
-  }
->
-  {/* <Route index element={<DashboardHome />} /> */}
-   <Route index element={<DashboardD/>} />
-  <Route path="whatsapp" element={<WhatsappBulkSender />} />
-    <Route path="success" element={<WhatsappSuccess />} />
-      <Route path="chat" element={<Chat />} />
-</Route>
-
-        
+          
+          {/* Dashboard Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DashboardD />} />
+            <Route path="whatsapp" element={<WhatsappBulkSender />} />
+            <Route path="success" element={<WhatsappSuccess />} />
+            <Route path="chat" element={<Chat />} />
+          </Route>
         </Routes>
       </Box>
 
-      {!isDashboard && <Footer />}
+      {/* Hide footer for dashboard pages and chat page */}
+      {!isDashboard && !isChatPage && <Footer />}
     </Box>
-    </>
   );
 }
 
