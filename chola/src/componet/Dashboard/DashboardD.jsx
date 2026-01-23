@@ -167,7 +167,7 @@ export function DashboardD() {
           {/* Features Title */}
           <Typography
             variant="h5"
-            gutterBottom
+            gutterBottom 
             sx={{
               color: "#128C7E",
               fontWeight: 700,
@@ -355,10 +355,7 @@ export function DashboardD() {
                         height: 32,
                         borderRadius: "50%",
                         flexShrink: 0,
-                        backgroundColor: alpha(
-                          benefit.icon.props.sx?.color || "#25D366",
-                          0.12,
-                        ),
+                    
                       }}
                     >
                       {benefit.icon}
@@ -515,7 +512,8 @@ export function DashboardD() {
                   },
                 }}
               >
-                {loading ? (
+                {/* {loading ? (
+
                   <>
                     <CircularProgress
                       size={16}
@@ -523,10 +521,10 @@ export function DashboardD() {
                     />
                     Connecting...
                   </>
-                ) : (
+                ) : ( */}
                   <><LinkIcon size={16}
                       sx={{ color: "white", mr: 1 }} /> Connect WhatsApp</>
-                )}
+                {/* )} */}
               </Button>
             </Box>
           </Box>
