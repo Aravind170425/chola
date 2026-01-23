@@ -161,7 +161,7 @@ export default function Inbox() {
   // Function to send message via WhatsApp API
   const sendWhatsAppMessage = async (messageData) => {
     try {
-      const response = await fetch('https://protandrous-unoiled-ricki.ngrok-free.dev/api/send-whatsapp', {
+      const response = await fetch('https://chola-whatsapp-api-backend.onrender.com/api/send-whatsapp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

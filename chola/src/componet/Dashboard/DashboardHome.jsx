@@ -57,7 +57,7 @@ export function DashboardHome() {
 
       axios
         .post(
-          "https://chola-whatsapp-api-backend.onrender.com",
+          "http://localhost:5050/api/v1/meta/complete-signup",
           {
             code: payload.code,
             waba_id: payload.waba_id,
