@@ -32,6 +32,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -63,6 +64,10 @@ export default function Inbox() {
     message: "",
     severity: "success",
   });
+
+  // Loading states
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [isSendingTemplate, setIsSendingTemplate] = useState(false);
 
   // Country codes
   const countryCodes = [
@@ -168,6 +173,8 @@ export default function Inbox() {
       const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
       if (messageType === "template" && selectedContact) {
+        setIsSendingTemplate(true);
+        
         // Check if all template parameters are filled
         const emptyParams = templateParams.filter(param => !param.trim());
         if (emptyParams.length > 0) {
@@ -176,6 +183,7 @@ export default function Inbox() {
             message: "Please fill in all template parameters",
             severity: "warning",
           });
+          setIsSendingTemplate(false);
           return;
         }
 
@@ -214,7 +222,10 @@ export default function Inbox() {
         
         // Clear template params
         setTemplateParams(["", "", ""]);
+        setIsSendingTemplate(false);
       } else {
+        setIsSendingMessage(true);
+        
         // Send regular text message
         setMessages((prev) => ({
           ...prev,
@@ -226,6 +237,8 @@ export default function Inbox() {
           message: "Message sent!",
           severity: "success",
         });
+        
+        setIsSendingMessage(false);
       }
 
       setInput("");
@@ -237,6 +250,8 @@ export default function Inbox() {
       }
     } catch (error) {
       console.error('Failed to send message:', error);
+      setIsSendingMessage(false);
+      setIsSendingTemplate(false);
       setSnackbar({
         open: true,
         message: `Failed to send message: ${error.message}`,
@@ -840,7 +855,7 @@ export default function Inbox() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                   size="small"
-                  disabled={messageType === "template"}
+                  disabled={messageType === "template" || isSendingMessage}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 20,
@@ -852,7 +867,7 @@ export default function Inbox() {
                 />
                 <IconButton
                   onClick={sendMessage}
-                  disabled={messageType === "text" ? !input.trim() : false}
+                  disabled={messageType === "text" ? !input.trim() || isSendingMessage : false}
                   sx={{
                     bgcolor: "primary.main",
                     color: "white",
@@ -862,7 +877,11 @@ export default function Inbox() {
                     "&.Mui-disabled": { bgcolor: "grey.400" },
                   }}
                 >
-                  <SendIcon sx={{ fontSize: '1rem' }} />
+                  {isSendingMessage ? (
+                    <CircularProgress size={16} sx={{ color: "white" }} />
+                  ) : (
+                    <SendIcon sx={{ fontSize: '1rem' }} />
+                  )}
                 </IconButton>
               </Box>
             </Paper>
@@ -1378,7 +1397,12 @@ export default function Inbox() {
         </Dialog>
 
         {/* Template Parameters Dialog */}
-        <Dialog open={openTemplateDialog} onClose={() => setOpenTemplateDialog(false)} maxWidth="sm" fullWidth>
+        <Dialog 
+          open={openTemplateDialog} 
+          onClose={() => !isSendingTemplate && setOpenTemplateDialog(false)} 
+          maxWidth="sm" 
+          fullWidth
+        >
           <DialogTitle sx={{ fontSize: '0.95rem', pb: 1 }}>
             {availableTemplates.find(t => t.name === selectedTemplate)?.displayName || "Template Parameters"}
           </DialogTitle>
@@ -1398,6 +1422,7 @@ export default function Inbox() {
                   value={templateParams[0] || ""}
                   onChange={(e) => setTemplateParams([e.target.value, templateParams[1], templateParams[2]])}
                   sx={{ mb: 1.5 }}
+                  disabled={isSendingTemplate}
                 />
                 <TextField
                   margin="dense"
@@ -1407,6 +1432,7 @@ export default function Inbox() {
                   value={templateParams[1] || ""}
                   onChange={(e) => setTemplateParams([templateParams[0], e.target.value, templateParams[2]])}
                   sx={{ mb: 1.5 }}
+                  disabled={isSendingTemplate}
                 />
                 <TextField
                   margin="dense"
@@ -1416,16 +1442,37 @@ export default function Inbox() {
                   value={templateParams[2] || ""}
                   onChange={(e) => setTemplateParams([templateParams[0], templateParams[1], e.target.value])}
                   placeholder="Jan 22, 2026"
+                  disabled={isSendingTemplate}
                 />
               </>
             )}
           </DialogContent>
           <DialogActions sx={{ p: 2, pt: 1 }}>
-            <Button onClick={() => setOpenTemplateDialog(false)} size="small" sx={{ fontSize: '0.75rem' }}>
+            <Button 
+              onClick={() => setOpenTemplateDialog(false)} 
+              size="small" 
+              sx={{ fontSize: '0.75rem' }}
+              disabled={isSendingTemplate}
+            >
               Cancel
             </Button>
-            <Button onClick={sendMessage} variant="contained" size="small" sx={{ fontSize: '0.75rem' }}>
-              Send Template
+            <Button 
+              onClick={sendMessage} 
+              variant="contained" 
+              size="small" 
+              sx={{ fontSize: '0.75rem', minWidth: 100 }}
+              disabled={isSendingTemplate}
+            >
+              {isSendingTemplate ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={16} sx={{ color: 'white' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+                    Sending...
+                  </Typography>
+                </Box>
+              ) : (
+                "Send Template"
+              )}
             </Button>
           </DialogActions>
         </Dialog>
