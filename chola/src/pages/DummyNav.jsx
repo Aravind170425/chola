@@ -1,4 +1,3 @@
-// Navbar.jsx
 import { useState } from "react";
 import {
   AppBar,
@@ -24,6 +23,8 @@ import {
   AccountBalanceWallet,
   ExpandMore,
   ExpandLess,
+  Security,
+  Description,
 } from "@mui/icons-material";
 
 export function DummyNav() {
@@ -121,6 +122,12 @@ export function DummyNav() {
             <NavLink to="/reports" style={linkStyle}>
               Reports
             </NavLink>
+            <NavLink to="/privacy-policy" style={linkStyle}>
+              Privacy Policy
+            </NavLink>
+            <NavLink to="/terms-and-services" style={linkStyle}>
+              Terms & Conditions
+            </NavLink>
           </Box>
         </Box>
 
@@ -174,7 +181,7 @@ export function DummyNav() {
 
             <Box sx={{ display: { xs: "none", md: "block" } }}>
               <Typography variant="body2" fontWeight={600} color="#333">
-                MR FRANCHISE 
+                MR franchise
               </Typography>
             </Box>
 
@@ -259,6 +266,31 @@ export function DummyNav() {
             <Typography variant="body2">Settings</Typography>
           </MenuItem>
 
+          {/* Legal Links in Dropdown */}
+          <Divider />
+          
+          <MenuItem
+            onClick={() => {
+              navigate("/privacy-policy");
+              handleMenuClose();
+            }}
+            sx={{ py: 1.5 }}
+          >
+            <Security sx={{ mr: 2, fontSize: 20, color: "#666" }} />
+            <Typography variant="body2">Privacy Policy</Typography>
+          </MenuItem>
+
+          <MenuItem
+            onClick={() => {
+              navigate("/terms-and-services");
+              handleMenuClose();
+            }}
+            sx={{ py: 1.5 }}
+          >
+            <Description sx={{ mr: 2, fontSize: 20, color: "#666" }} />
+            <Typography variant="body2">Terms & Conditions</Typography>
+          </MenuItem>
+
           <Divider />
 
           <MenuItem onClick={handleLogout} sx={{ py: 1.5 }}>
@@ -337,6 +369,7 @@ export function DummyNav() {
           borderTop: "1px solid #f0f0f0",
           overflowX: "auto",
           background: "#fff",
+          px: 2,
         }}
       >
         <NavLink to="/" end style={linkStyle}>
@@ -351,11 +384,14 @@ export function DummyNav() {
         <NavLink to="/transactions" style={linkStyle}>
           Transactions
         </NavLink>
+        <NavLink to="/reports" style={linkStyle}>
+          Reports
+        </NavLink>
         <NavLink to="/privacy-policy" style={linkStyle}>
-          Privacy Policy
+          Privacy
         </NavLink>
         <NavLink to="/terms-and-services" style={linkStyle}>
-          Terms & Services  
+          Terms
         </NavLink>
       </Box>
     </AppBar>
